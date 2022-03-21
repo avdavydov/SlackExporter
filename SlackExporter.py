@@ -4,10 +4,14 @@ import time
 import warnings
 from datetime import datetime
 
+
 import pandas as pd
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
+# Токен для доступа к Slack должен лежать в файле token.py
+import token
+TOKEN = token.token
 
 def duration(finction):
     def wrapped(*args, **kwargs):
@@ -299,7 +303,7 @@ def saveToExcel(df, file_name) -> None:
 
 @duration
 def main():
-    token = '********'
+    token = TOKEN
 
     warnings.filterwarnings("ignore")
     ssl_context = ssl.create_default_context()
