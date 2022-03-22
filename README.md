@@ -10,6 +10,7 @@
 2. В разделе `OAuth & Permissions` -> `User Token Scopes` добавить следующие `OAuth Scope`:
 
 
+
     * channels:history
     * channels:read
     * groups:history
@@ -22,6 +23,7 @@
     * reactions:read
     * users.profile:read
     * users:read
+
 
 3. Выполнить установку приложения в необходимое пространство Slack
 4. Выполнить установку приложения в Slack, в разделе `Приложения` 
