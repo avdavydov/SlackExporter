@@ -10,7 +10,6 @@
 2. В разделе `OAuth & Permissions` -> `User Token Scopes` добавить следующие `OAuth Scope`:
 
 
-
     * channels:history
     * channels:read
     * groups:history
