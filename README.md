@@ -29,6 +29,8 @@
 
 
     token = 'xoxp-****' 
+
+
 значение для токена нужно взять из `User OAuth Token` раздела `OAuth & Permissions` -> `OAuth Tokens for Your Workspace`
 
 Для установки зависимостей выполнить:
