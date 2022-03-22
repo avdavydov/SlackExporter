@@ -9,6 +9,7 @@
 1. Создать новое приложение на https://api.slack.com/apps
 2. В разделе `OAuth & Permissions` -> `User Token Scopes` добавить следующие `OAuth Scope`:
 
+
     * channels:history
     * channels:read
     * groups:history
@@ -26,8 +27,9 @@
 4. Выполнить установку приложения в Slack, в разделе `Приложения` 
 5. Создать файл token.py и добавить в него строку: 
 
+
     token = 'xoxp-****' 
-    значение для токена нужно взять из `User OAuth Token` раздела `OAuth & Permissions` -> `OAuth Tokens for Your Workspace`
+значение для токена нужно взять из `User OAuth Token` раздела `OAuth & Permissions` -> `OAuth Tokens for Your Workspace`
 
 Для установки зависимостей выполнить:
  
