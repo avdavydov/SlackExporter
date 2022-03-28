@@ -1,15 +1,19 @@
+import datetime
 import logging
 import ssl
 import time
 import warnings
-from datetime import datetime
+
+# from datetime import datetime
 import pandas as pd
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
 # Токен для доступа к Slack должен лежать в файле config.py
 import config
+
 TOKEN = config.token
+
 
 def duration(finction):
     def wrapped(*args, **kwargs):
@@ -22,9 +26,12 @@ def duration(finction):
 
 
 def loggingConfig(level):
-    logging.basicConfig(format='[%(asctime)s] [%(levelname)s] %(message)s',
+    file_log = logging.FileHandler('Log.log')
+    console_out = logging.StreamHandler()
+    logging.basicConfig(handlers=(file_log, console_out),
+                        format='[%(asctime)s] [%(levelname)s] %(message)s',
                         datefmt='%d-%m-%Y %H:%M:%S',
-                        level=logging.INFO)
+                        level=level)
 
 
 def get_user_by_id(client, user_id):
@@ -177,7 +184,7 @@ def fetch_conversations_replies(client, channel, ts, cursor=None, limit=1000):
             user = get_user_by_id(client=client, user_id=user)
             ts = messages.get('ts')
             ts_float = float(ts)
-            ts = datetime.utcfromtimestamp(ts_float)
+            ts = datetime.datetime.utcfromtimestamp(ts_float)
             ts = ts.strftime("%d:%m:%Y %H:%M:%S")
             text = messages.get('text')
             res.append([type, user, ts, text, ts_float])
@@ -218,7 +225,7 @@ def fetch_conversations_history(client, channel, cursor=None, limit=1000):
             user = messages.get('user')
             ts = messages.get('ts')
             ts_float = float(ts)
-            ts = datetime.utcfromtimestamp(ts_float)
+            ts = datetime.datetime.utcfromtimestamp(ts_float)
             ts = ts.strftime("%d:%m:%Y %H:%M:%S")
             text = messages.get('text')
             thread_ts = messages.get('thread_ts')
@@ -289,7 +296,9 @@ def get_all_conversations_history_for_all_users(client, types, limit=None):
     return df
 
 
-def saveToExcel(df, file_name) -> None:
+def saveToExcel(df, file_name, add_date=None) -> None:
+    if add_date:
+        file_name = file_name.replace('.xlsx', ' ' + datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S') + '.xlsx')
     loggingConfig(logging.INFO)
     logging.info('Выгрузка отчёта')
     writer = pd.ExcelWriter(file_name, engine='xlsxwriter', options={'strings_to_urls': False})
@@ -315,11 +324,11 @@ def main():
     channels_result = pd.merge(channels, users, left_on='user', right_on='id', how='left')
     channels_result = channels_result.drop('id_y', 1)
     file_name = '~/Downloads/Slack_channels.xlsx'
-    saveToExcel(df=channels_result, file_name=file_name)
+    saveToExcel(df=channels_result, file_name=file_name, add_date=True)
 
     # Экспорт всей истории переписок со всеми пользователями (каналы и их историю не экспортируем)
     types = 'im, mpim'
-    limit = 200
+    limit = 150
     messages = get_all_conversations_history_for_all_users(client=client, types=types, limit=limit)
     messages_result = pd.merge(messages, users, left_on='user', right_on='id', how='left')
     messages_result = messages_result.drop('id', 1)
@@ -329,8 +338,8 @@ def main():
     messages_result = messages_result.reindex(
         columns=['channel_name', 'ts', 'display_name', 'text', 'r_user', 'r_ts', 'reply', 'type', 'r_type', 'real_name',
                  'name', 'user', 'channel'])
-    file_name = '~/Downloads/Slack_messages.xlsx'
-    saveToExcel(df=messages_result, file_name=file_name)
+    file_name = '~/Downloads/SlackHistory/Slack_messages.xlsx'
+    saveToExcel(df=messages_result, file_name=file_name, add_date=True)
 
 
 if __name__ == '__main__':
