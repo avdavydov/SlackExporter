@@ -323,7 +323,7 @@ def main():
     channels = get_all_channels(client=client, types=types)
     channels_result = pd.merge(channels, users, left_on='user', right_on='id', how='left')
     channels_result = channels_result.drop('id_y', 1)
-    file_name = '~/Downloads/Slack_channels.xlsx'
+    file_name = '~/Downloads/SlackHistory/Slack_channels.xlsx'
     saveToExcel(df=channels_result, file_name=file_name, add_date=True)
 
     # Экспорт всей истории переписок со всеми пользователями (каналы и их историю не экспортируем)
